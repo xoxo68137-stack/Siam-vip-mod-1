@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siam t</title>
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --dark: #1a1a2e;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; background: #000;
+        }
+
+        /* Login Overlay */
+        #login-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .login-box {
+            background: var(--dark); padding: 30px; border-radius: 15px;
+            border: 2px solid var(--primary); text-align: center; color: white;
+            box-shadow: 0 0 20px var(--primary);
+        }
+        input {
+            padding: 10px; margin: 10px 0; border-radius: 5px; border: none; width: 80%;
+        }
+        button {
+            padding: 10px 25px; background: var(--primary); border: none; 
+            border-radius: 5px; cursor: pointer; font-weight: bold;
+        }
+
+        /* Game Frame */
+        #game-container {
+            width: 100%; height: 100vh;
+        }
+        iframe {
+            width: 100%; height: 100%; border: none;
+        }
+
+        /* Floating Signal Box */
+        #signal-box {
+            position: absolute; top: 100px; left: 20px; width: 200px;
+            background: rgba(26, 26, 46, 0.95); border: 2px solid var(--primary);
+            border-radius: 15px; color: white; z-index: 1000; cursor: move;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none;
+            backdrop-filter: blur(10px); transition: transform 0.2s;
+        }
+        .box-header {
+            padding: 10px; background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: 12px 12px 0 0; font-size: 12px; font-weight: bold; text-align: center;
+        }
+        .box-content {
+            padding: 15px; text-align: center;
+        }
+        .signal-text { font-size: 24px; font-weight: bold; margin: 10px 0; color: #00ff00; }
+        .period-text { font-size: 10px; color: #ccc; }
+        .timer-text { font-size: 18px; color: #ffeb3b; font-family: monospace; }
+        .ai-status { font-size: 9px; color: var(--primary); margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="login-overlay">
+    <div class="login-box">
+        <h2>QUANTUM AI LOGIN</h2>
+        <input type="password" id="pass" placeholder="Enter Access Key...">
+        <br>
+        <button onclick="checkLogin()">Access Bot</button>
+    </div>
+</div>
+
+<div id="game-container">
+    <iframe src="https://dkwin15.com" allowfullscreen></iframe>
+</div>
+
+<div id="signal-box">
+    <div class="box-header">QUANTUM AI PREDICTOR</div>
+    <div class="box-content">
+        <div class="period-text" id="period">PERIOD: loading...</div>
+        <div class="signal-text" id="signal">WAIT...</div>
+        <div class="timer-text" id="timer">00:30</div>
+        <div class="ai-status">MONEY MGMT: ACTIVE</div>
+    </div>
+</div>
+
+<script>
+    // Login Logic
+    function checkLogin() {
+        const pass = document.getElementById('pass').value;
+        if(pass === "mama123") { // এখানে তোমার পাসওয়ার্ড দাও
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('signal-box').style.display = 'block';
+            startBot();
+        } else {
+            alert("Wrong Password Mama!");
+        }
+    }
+
+    // Dragging Logic
+    const signalBox = document.getElementById("signal-box");
+    let isDragging = false;
+    let offset = [0, 0];
+
+    signalBox.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offset = [signalBox.offsetLeft - e.clientX, signalBox.offsetTop - e.clientY];
+    }, true);
+
+    document.addEventListener('mouseup', () => { isDragging = false; }, true);
+
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            signalBox.style.left = (e.clientX + offset[0]) + 'px';
+            signalBox.style.top = (e.clientY + offset[1]) + 'px';
+        }
+    }, true);
+
+    // AI Logic & Period Generation
+    function generatePeriod() {
+        const now = new Date();
+        const istOffset = 5.5 * 60;
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const istTime = new Date(utc + (istOffset * 60000));
+        
+        const hours = istTime.getHours();
+        const minutes = istTime.getMinutes();
+        const seconds = istTime.getSeconds();
+        
+        const startHour = 5;
+        const startMinute = 30;
+        let elapsedSeconds = (hours * 3600 + minutes * 60 + seconds) - (startHour * 3600 + startMinute * 60);
+        if (elapsedSeconds < 0) elapsedSeconds = 0;
+        
+        const totalPeriods = Math.floor(elapsedSeconds / 30);
+        const upcomingPeriod = totalPeriods + 1;
+        
+        const yyyy = istTime.getFullYear();
+        const mm = String(istTime.getMonth() + 1).padStart(2, '0');
+        const dd = String(istTime.getDate()).padStart(2, '0');
+        
+        const datePart = `${yyyy}${mm}${dd}`;
+        const periodNumber = "100005" + String(upcomingPeriod).padStart(4, '0');
+        return datePart + periodNumber;
+    }
+
+    function quantumAI(period) {
+        // Simple Quantum Logic based on Period ID
+        const lastDigit = parseInt(period.slice(-1));
+        const signals = ["BIG", "SMALL", "BIG", "SMALL", "SMALL", "BIG"];
+        return signals[lastDigit % signals.length];
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const remainingSeconds = 30 - (seconds % 30);
+        document.getElementById("timer").innerText = `00:${String(remainingSeconds).padStart(2, '0')}`;
+        
+        if (remainingSeconds === 30 || remainingSeconds === 1) {
+            const currentPeriod = generatePeriod();
+            document.getElementById("period").innerText = `PERIOD: ${currentPeriod}`;
+            document.getElementById("signal").innerText = quantumAI(currentPeriod);
+        }
+    }
+
+    function startBot() {
+        setInterval(updateTimer, 1000);
+    }
+</script>
+
+</body>
+</html>
